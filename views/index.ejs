@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trả lời câu hỏi về trà</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hỏi về trà</h1>
+    <p>Nhập câu hỏi của bạn bên dưới:</p>
+    <textarea id="question" rows="4" cols="50" placeholder="Tôi muốn mua trà xanh, bạn có loại nào?"></textarea>
+    <br><br>
+    <button id="askButton">Hỏi</button>
+    <div id="response"></div>
+
+    <script>
+        let isFirstQuestion = true; // Biến xác định câu hỏi đầu tiên
+    
+        document.getElementById("askButton").addEventListener("click", async () => {
+            const question = document.getElementById("question").value;
+    
+            if (!question.trim()) {
+                alert("Vui lòng nhập câu hỏi.");
+                return;
+            }
+    
+            try {
+                const response = await fetch("http://localhost:3000/generate-tea-response", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        currentQuestion: question,
+                        isFirstQuestion: isFirstQuestion // Gửi trạng thái câu hỏi đầu tiên
+                    })
+                });
+    
+                if (!response.ok) throw new Error("Error with response: " + response.statusText);
+    
+                const data = await response.json();
+                document.getElementById("response").innerHTML = `
+                    <h3>Phản hồi từ AI:</h3>
+                    <p>${data.aiResponse || "Không có phản hồi."}</p>
+                `;
+    
+                isFirstQuestion = false; // Cập nhật trạng thái sau câu hỏi đầu tiên
+            } catch (error) {
+                console.error("Lỗi:", error);
+                document.getElementById("response").textContent = "Đã xảy ra lỗi trong quá trình xử lý.";
+            }
+        });
+    </script>
+    
+</body>
+</html>
