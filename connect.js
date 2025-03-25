@@ -26,7 +26,7 @@ app.get("/", (req, res) => {
     res.render("index"); // Render file index.ejs
 });
 // Khởi tạo Google Generative AI
-const genAI = new GoogleGenerativeAI("AIzaSyDrJuP95rXc93gfGEY1V8y2bM3AVTHUjC0");
+const genAI = new GoogleGenerativeAI("API-cua-ban");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 // Route API
